@@ -3,6 +3,13 @@
 
 ## Настройка
 
+## WSL2 + Ubuntu
+```bash
+wsl --install
+wsl --set-default-version 2
+wsl --install Ubuntu-24.04
+```
+
 ### Ставим нужный софт
 ```bash
 sudo apt update
