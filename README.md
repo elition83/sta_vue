@@ -7,6 +7,7 @@
 ```bash
 wsl --install
 wsl --set-default-version 2
+#Перезагрузка
 wsl --install Ubuntu-24.04
 ```
 
