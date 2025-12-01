@@ -9,18 +9,21 @@ wsl --install
 wsl --set-default-version 2
 #Перезагрузка
 wsl --install Ubuntu-24.04
+
 ```
 
 ### Ставим нужный софт
 ```bash
 sudo apt update
-sudo apt install lighttpd php php-fpm php-mbstring php-xml php-curl php-zip php-sqlite3 php-mysql composer 
-sudo apt install curl git unzip
+sudo apt install -y php-fpm php-mbstring php-xml php-curl php-zip php-sqlite3 php-mysql composer
+sudo apt install -y curl git unzip 
 ```
 #node 22
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt install -y nodejs
+#Обновляем npm
+npm install -g npm@11.6.4
 ```
 
 ### папка под Проект
@@ -29,7 +32,7 @@ mkdir sta
 ```
 ### install Backend (laravel)
 ```bash
-cd ~/sta
+cd sta
 composer create-project laravel/laravel backend
 cd backend
 composer require laravel/sanctum
