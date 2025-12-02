@@ -276,8 +276,23 @@ frontend/.vite
 
 ```
 
+
+## GIT
+### Если делали с нуля - то просто отправляем сво наработки на Git
 ```bash
 git add backend frontend run.sh .gitignore
 git commit -m "Initial STA project (Laravel API + Vue + Lighttpd)"
 ```
+
+### Чтоб забрать  проект с гита к себе 
+```bash
+git clone git@github.com:elition83/sta_vue.git sta
+
+cd backend
+composer install
+
+cd ../frontend/
+npm install
+```
+
 
