@@ -1,0 +1,116 @@
+
+group | Группа (например, организация или регион) | factory(4)
+    abbr            = string(6)  | unique
+    title           = string(16) | unique | index
+    description     = string(255)| default('')
+
+role | 
+    type            = enum('none', 'read', 'create', 'update', 'delete', 'admin')
+    description     = string(255)| default('')
+
+group_user | Пивотная таблица для определения прав с привязкой к группе
+    group_id        = FK()       | onDelete('cascade') | onUpdate('cascade')
+    user_id         = FK()       | onDelete('cascade') | onUpdate('cascade')
+    role_id         = FK()       | onDelete('restrict')
+    unique ()
+
+locality | Город, населённый пункт или завод  | factory(10)
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    abbr            = string(6)  | unique
+    title           = string(16) | unique | index
+    description     = string(255)| default('')
+
+street | Улица | factory(1000)
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    locality_id     = FK()       | onDelete('restrict')
+    abbr            = string(6)  | unique(locality_id)
+    title           = string(32) | unique(locality_id) | index
+    description     = string(255)| default('')
+
+building | Здание street | Улица | factory(100000)
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    street_id       = FK()       | onDelete('restrict')
+    abbr            = string(6)  | unique(street_id)
+    title           = string(32) | unique(street_id) | index
+    name            = string(255)| default('')
+    description     = string(255)| default('')
+
+
+node | Узел (например, серверная или технический узел) | factory(250000)
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    building_id     = FK()       | onDelete('restrict')
+    abbr            = string(6)   | unique
+    title           = string(64)  | unique | index
+    description     = string(255) | default('')
+
+vendnor | Производитель (вендор) | factory(10)
+    title           = string(32) | unique | index
+    name            = string(255)| default('')
+    country         = string(32) | index
+    website         = string(128) | default('') | unique | index
+    description     = string(255) | default('')
+
+status | Каталог статусов
+    title           = string(32) | unique | index
+    description     = string(255)| default('')
+
+racktype | Каталог стоек (типовой шкаф) | factory(20)
+    vendnor_id      = FK()       | onDelete('restrict')
+    model           = string(64) | default('') | index
+    title           = string(255) | unique | index
+    weight          = integer    | default(100)
+    units           = integer    | default(42)
+    width           = integer    | default(600)
+    depth           = integer    | default(800)
+    loadcapacity    = integer    | default(1000)
+    type            = enum('шкаф', 'стойка') | default('шкаф')
+    mount           = enum('напольный', 'подвесной', 'универсальный') | default('универсальный')
+    frame           = enum('глухой', 'стеклянный', 'перфорированный') | default('перфорированный')
+    frontdoor       = enum('неизвестно', 'одинарная', 'двойная', 'пенал' ) | default('неизвестно')
+    backdoor        = enum('неизвестно', 'одинарная', 'двойная', 'нет') | default('неизвестно')
+    description     = string(255)| default('')
+
+rack || factory(400000)
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    location        = morphs(node, building)
+    racktype_id     = FK()       | onDelete('restrict')
+    abbr            = string(6)   | unique
+    title           = string(32)  | unique | index
+    description     = string(255) | default('')
+    status_id       = FK()       | onDelete('restrict')
+
+equipment || factory(2000000)
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    location        = morphs(rack, node, building)
+    parent_id       = FK(equipment, id)   | onDelete('restrict') 
+    vender_id       = FK()       | onDelete('restrict')
+    model           = string(32) | index
+    serial          = string(64) | unique | index
+    is_module       = boolean    | default(false)
+    status_id       = FK()       | onDelete('restrict')
+    description     = string(255)| default('')
+
+porttype | Каталог типовые порты | factory(20)
+    title           = string(32) | unique | index
+    type            = enum('ethernet', 'fiber', 'serial', 'power', 'other')
+    speed           = string(16) | default('auto')
+    description     = string(255)| default('')
+
+port | Порт на equipment | factory(100000000)
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    equipment_id    = FK()       | onDelete('restrict')
+    porttype_id     = FK()       | onDelete('restrict')
+    number          = string(16) | index | unique(equipment_id)
+    status_id       = FK()       | onDelete('restrict')
+    description     = string(255)| default('')
+
+expansion | Слот для установки модуля
+    group_id        = FK()       | onUpdate('cascade') | onDelete('restrict')
+    equipment_id    = FK()       | onDelete('restrict')
+    porttype_id     = FK()       | onDelete('restrict')
+    type            = enum('module', 'power', 'storage', 'other')
+    max_power_w     = integer    | default(0)
+    max_speed_gbps  = integer    | default(0)
+    number          = string(16) | index
+    status_id       = FK()       | onDelete('restrict')
+    description     = string(255)| default('')
